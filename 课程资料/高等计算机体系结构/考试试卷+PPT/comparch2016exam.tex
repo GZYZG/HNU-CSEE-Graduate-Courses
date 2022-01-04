@@ -1,0 +1,270 @@
+\documentclass[a4paper, 12pt, addpoints]{exam}
+
+\usepackage{ctex}
+\usepackage{graphicx}
+
+\pagestyle{headandfoot}
+
+\firstpageheadrule
+\firstpageheader{Advanced Computer Architecture}{Final Exam}{28 Dec 2016}
+\runningheadrule
+\runningheader{Advanced Computer Architecture}{}{Final Exam}
+\firstpagefooter{}{}{}
+\runningfooter{}{Page \thepage\ of \numpages}{}
+\runningfootrule
+
+\begin{document}
+
+\begin{center}
+
+\fbox{\fbox{\parbox{5.5in}{\centering
+\vspace{0.2in}
+\large\ GRADUATE COURSE EXAM \\
+ADVANCED COMPUTER ARCHITECTURE \\
+28 DEC 2016
+\vspace{0.1in}
+%Answer the questions in the spaces provided after the
+%question sheets. If you run out of room for the answers,
+%continue on the back of the page.
+}}}
+
+\vspace{0.2in}
+
+\gradetable[h][questions]
+
+
+\end{center}
+
+\vspace{0.2in}
+\noindent
+\makebox[\textwidth]{Student Name:\enspace\hrulefill}
+
+\vspace{0.1in}
+\noindent
+\makebox[\textwidth]{Student ID:\enspace\hrulefill}
+
+\vspace{0.2in}
+\centering\large{QUESTIONS}
+\vspace{0.1in}
+
+\begin{questions}
+
+\raggedright
+
+\question[10]
+We want to accelerate a single thread program with multi-threading on a multi-core CPU. Suppose we plan to use 8 threads which is the maximal number of simultaneous threads supported by the multi-core CPU. If we want to achieve a speedup of 5, what percentage of the program workload should we accelerate with these 8 threads?
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+Suppose the workload portion to be accelerated is x.  \\
+\centering 5 = 1/(x/8+1-x)   \\
+\centering 5 = 1/(1-7x/8)   \\
+\centering 5*(1-7x/8) = 1   \\
+\centering 5-35x/8 = 1   \\
+\centering -35x/8 = -4   \\
+\centering -35x = -32   \\
+\centering x = 32/35   \\
+\raggedright We should accelerate 32/35 of the workload.
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+Suppose a single thread program spends 10\% of its execution time on data I/O which is sequential and 90\% of its execution time on numerical computation which is parallelizable. If we use a GPU to accelerate the computational part with 100 GPU threads, but a GPU thread runs 50\% slower than that of a CPU thread and data I/O time will be doubled when using GPU, what is the speedup we can get? If we can launch infinite number of threads on GPU, what is the maximal speedup we can get?
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+Lauch 100 GPU threads which is equivalent to 50 CPU threads:
+\centering Speedup = 1 / (0.9/50 + 0.2) = 1/0.218 = 4.59   \\
+\raggedright Launch infinite number of threads: \\
+\centering Speedup = 1/(0.9/inf + 0.2) = 1/(0+0.2) = 5   \\
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+It is claimed that the ideal speedup of a pipelined CPU over an unpipelined one is the number of pipeline stages. Please provide an explanation of this statement.
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+Suppose N instructions are to be executed, n is the number of pipeline stages. Each stage takes t time. \\
+Time for unpipelined CPU:
+\centering Ts = nNt   \\
+\raggedright Time for pipelined CPU: \\
+\centering Tp = nt + (N-1)*t   \\
+\raggedright Ideal speedup is got when N -> infinite:
+\centering Ts/Tp = nNt/(nt+Nt-t) = n/(n/N+1-1/N) -> n/(0+1-0) = n
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+Data forwarding is a technique to deal with the data hazard in pipelined CPU. In the 5-stage pipelined MIPS CPU, data forwarding can eliminate the stall cycle between dependant arithmetic-logic and store instructions but can not eliminate the stall between the load instruction and its succeeding instruction that requires the loaded value. Please give an explanation on this.
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+Dependant ALU and store instructions actually use the required value at EXE or MEM stage, while the instruction to generate this value produces the value no later than the EXE stage. So it is possible to forward the required value from the EXE stage of the previous instruction to the EXE or MEM stage of the succeeding instruction without stall. \\
+Load instruction produces the value at the end of the MEM stage. If the succeeding instruction requires the value at the EXE and beginning of the MEM stage, it is impossible to forward the loaded value ahead of the time. So the stall can't be eliminated.
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+In the 5-stage pipelined MIPS CPU, ideal CPI is expected to be 1. However, a stall cycle is needed for branch instructions to determine branch outcome and branch target address. If this stall can't be eliminated, what is the average CPI for branch instructions? If the hardware fetches the succeeding instruction after the branch (always predict branch is not taken), and cancel it when the branch is taken, what is the average CPI for branchs when the frequency of taken branchs is 60\%? 
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+CPI when stall not dealt with:
+\centering CPI = 2
+\raggedright CPI when using hardware prediction (always not taken): 
+\centering CPI = 2*0.6 + 1*0.4 = 1.6
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+The 5-stage pipelined MIPS CPU has 1 clock cycle stall for load instruction and its succeeding dependant instruction, and 1 clock cycle stall for branch instruction. A naive compiler takes no effort to hide these stalls while an optimized compiler can hide half of the load stall and 20\% of the branch stall by instruction rescheduling. Considering the following instruction mix, assuming that all load instruction has a succeeding instruction that requires the loaded value, what is the speedup of the optimized compiler over the naive one?
+
+\begin{center}
+  \begin{tabular}{ | c | c | c | }
+    \hline
+    Instruction type & Frequency & CPI not considering optimization \\ \hline
+    ALU ops & 0.43 & 1 \\ \hline
+    Loads & 0.21 & 2 \\ \hline
+    Stores & 0.12 & 1 \\ \hline
+    Branchs & 0.24 & 2 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+CPI for naive compiler:  \\
+\centering CPIa = (0.43*1+0.21*2 + 0.12*1 + 0.24*2) = 1.45   \\
+\raggedright CPI for optimized compiler: \\
+\centering CPIb = (0.43*1+0.21*1.5+0.12*1+0.24*1.8) = 1.297 \\
+\raggedright Speedup of optimized compiler over naive one:
+\centering Speedup = CPIa/CPIb = 1.45/1.297 = 1.118
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+The 5-stage pipelined MIPS CPU has 1 clock cycle stall for load instruction and its succeeding dependant instruction, and 1 clock cycle stall for branch instruction. In addition to these stalls, CPU has to stall for memory accesses if not hit in cache. If the cache hit rate is 90\%, hit time is 1 cycle, and miss penalty is 60 cycles, what is the average CPI considering the following instruction mix? If the hit rate is improved to 99\% by some hardware and software techniques at a cost of 10\% lower CPU frequency, will the overall performance improve?
+
+\begin{center}
+  \begin{tabular}{ | c | c | c | }
+    \hline
+    Instruction type & Frequency & CPI not considering memory stalls \\ \hline
+    ALU ops & 0.5 & 1 \\ \hline
+    Loads & 0.2 & 2 \\ \hline
+    Stores & 0.1 & 1 \\ \hline
+    Branchs & 0.2 & 2 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+CPU time before hit rate improvement:  \\
+\centering t1 = (0.5*1+0.2*2+0.1*1+0.2*2+ \\ (1+0.2+0.1)*(1+0.1*60))*IC/f = (1.4 + 9.1)*IC/f = 10.5*IC/f   \\
+\raggedright CPU time after hit rate improvement:  \\
+\centering t2 = (0.5*1+0.2*2+0.1*1+0.2*2+ \\ (1+0.2+0.1)*(1+0.01*60))*IC/0.9f = (1.4 + 2.08)*IC/0.9f = 3.87*IC/f  \\
+\raggedright CPU time decreases, so performance improves.
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+The following diagram is the structure of the Tomasulo's algorithm with reorder buffer (ROB). What is the advantage of using this structure?
+
+\centering \includegraphics[scale=0.5]{tomasulo}
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+Advantages possibly listed but not limited to:  \\
+(1) Out of order execution, in order commit of instructions   \\
+(2) Precise interrupt \\
+(3) Dynamic scheduling of instructions \\
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+The following diagram shows a TLB miss procedure. Please briefly describe the actions of the arrows with labels from 1 to 6.
+
+\centering \includegraphics[scale=0.5]{tlbmiss}
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+(1) CPU launches memory access at virtual address VA;  \\
+(2) MMU extracts virtual page number VPN from VA and look it up in TLB which replies with a miss;   \\
+(3) MMU calculate page table element address PTEA and access cache/memory; \\
+(4) Cache/memory returns page table element PTE to MMU and TLB stores it; \\
+(5) MMU sorts out the physical address PA with PTE and access cache/memory;  \\
+(6) Cache/memory returns data to CPU.    \\
+\end{solution} 
+\newpage
+
+
+\raggedright
+
+\question[10]
+The following diagram is a directory-based cache coherence structure in a multiprocessor machine. If processor 2 is going to read some new data belonging to a memory block with processor 1 as the home node while is currently owned by processor 0 and is dirty, what actions should be done to complete this read request?
+
+\centering \includegraphics[scale=0.5]{directorycc}
+
+\begin{solution} 
+\newpage
+
+%{ } \\
+(1) Processor 2 sends read miss message to home node processor 1;  \\
+(2) Processor 1 replies the owner id of the memory block;   \\
+(3) Processor 2 sends data request to processor 0; \\
+(4) Processor 0 replies with data to processor 2 and change cache line state to Shared; \\
+(5) Processor 0 also sends data and directory revision message to home node, processor 1 updates presence bits, write data to memory and clears dirty bit  \\
+\end{solution} 
+\newpage
+
+
+
+
+\end{questions}
+
+\end{document}
